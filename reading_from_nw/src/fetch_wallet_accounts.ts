@@ -45,4 +45,28 @@ const fetchTokenAccount = async() =>{
     );
 }
 
-fetchTokenAccount();
+const fetchMintAccount= async() =>{
+    const connection = new Connection("https://api.mainnet-beta.solana.com","confirmed")
+    const publicKey = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+
+    const accountInfo = await connection.getAccountInfo(publicKey);
+
+    console.log(accountInfo)
+
+    console.log(JSON.stringify(accountInfo,
+                (key,value)=>{
+                    if(key === "data" && value && value.length >1){
+                        return [
+                            value[0],
+                            "...truncated, total bytes: " + value.length + "...",
+                            value[value.length - 1]
+                        ]
+                    }
+                    return value
+                }
+            ,
+            2
+        )
+    )
+}
+fetchMintAccount()

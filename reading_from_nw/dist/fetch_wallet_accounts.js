@@ -16,7 +16,6 @@ const fetchWalletAccount = () => __awaiter(void 0, void 0, void 0, function* () 
     const connection = new web3_js_1.Connection("http://127.0.0.1:8899", "confirmed");
     const signature = yield connection.requestAirdrop(publicKey, web3_js_1.LAMPORTS_PER_SOL);
     const latestBlockHash = yield connection.getLatestBlockhash();
-    // await connection.confirmTransaction(signature,"confirmed");
     yield connection.confirmTransaction({
         blockhash: latestBlockHash.blockhash,
         lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
@@ -40,4 +39,20 @@ const fetchTokenAccount = () => __awaiter(void 0, void 0, void 0, function* () {
         return value;
     }, 2));
 });
-fetchTokenAccount();
+const fetchMintAccount = () => __awaiter(void 0, void 0, void 0, function* () {
+    const connection = new web3_js_1.Connection("https://api.mainnet-beta.solana.com", "confirmed");
+    const publicKey = new web3_js_1.PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+    const accountInfo = yield connection.getAccountInfo(publicKey);
+    console.log(accountInfo);
+    console.log(JSON.stringify(accountInfo, (key, value) => {
+        if (key === "data" && value && value.length > 1) {
+            return [
+                value[0],
+                "...truncated, total bytes: " + value.length + "...",
+                value[value.length - 1]
+            ];
+        }
+        return value;
+    }, 2));
+});
+fetchMintAccount();
