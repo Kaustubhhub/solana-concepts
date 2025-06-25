@@ -9,7 +9,14 @@ const fetchWalletAccount = async() =>{
 
     const signature = await connection.requestAirdrop(publicKey,LAMPORTS_PER_SOL);
 
-    await connection.confirmTransaction(signature,"confirmed");
+    const latestBlockHash = await connection.getLatestBlockhash()
+
+    // await connection.confirmTransaction(signature,"confirmed");
+    await connection.confirmTransaction({
+        blockhash:latestBlockHash.blockhash,
+        lastValidBlockHeight:latestBlockHash.lastValidBlockHeight,
+        signature:signature
+    });
 
     const accountInfo = await connection.getAccountInfo(publicKey)
     console.log(JSON.stringify(accountInfo, null, 2));

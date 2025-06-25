@@ -10,13 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const web3_js_1 = require("@solana/web3.js");
-const readingFromNetwork = () => __awaiter(void 0, void 0, void 0, function* () {
-    const keypair = web3_js_1.Keypair.generate();
-    const publicKey = keypair.publicKey;
+const keypair = web3_js_1.Keypair.generate();
+const publicKey = keypair.publicKey;
+const fetchWalletAccount = () => __awaiter(void 0, void 0, void 0, function* () {
     const connection = new web3_js_1.Connection("http://127.0.0.1:8899", "confirmed");
     const signature = yield connection.requestAirdrop(publicKey, web3_js_1.LAMPORTS_PER_SOL);
-    yield connection.confirmTransaction(signature, "confirmed");
+    const latestBlockHash = yield connection.getLatestBlockhash();
+    // await connection.confirmTransaction(signature,"confirmed");
+    yield connection.confirmTransaction({
+        blockhash: latestBlockHash.blockhash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        signature: signature
+    });
     const accountInfo = yield connection.getAccountInfo(publicKey);
     console.log(JSON.stringify(accountInfo, null, 2));
 });
-readingFromNetwork();
+const fetchTokenAccount = () => __awaiter(void 0, void 0, void 0, function* () {
+});
+fetchWalletAccount();
