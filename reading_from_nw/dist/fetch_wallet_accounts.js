@@ -26,5 +26,18 @@ const fetchWalletAccount = () => __awaiter(void 0, void 0, void 0, function* () 
     console.log(JSON.stringify(accountInfo, null, 2));
 });
 const fetchTokenAccount = () => __awaiter(void 0, void 0, void 0, function* () {
+    const connection = new web3_js_1.Connection("http://127.0.0.1:8899", "confirmed");
+    const address = new web3_js_1.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+    const accountInfo = yield connection.getAccountInfo(address);
+    console.log(JSON.stringify(accountInfo, (key, value) => {
+        if (key === "data" && value && value.length > 1) {
+            return [
+                value[0],
+                "...truncated, total bytes: " + value.length + "...",
+                value[value.length - 1]
+            ];
+        }
+        return value;
+    }, 2));
 });
-fetchWalletAccount();
+fetchTokenAccount();
