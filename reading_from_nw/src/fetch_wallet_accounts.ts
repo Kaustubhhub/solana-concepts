@@ -1,4 +1,5 @@
 import {Connection, Keypair, LAMPORTS_PER_SOL, PublicKey} from '@solana/web3.js'
+import {getMint} from "@solana/spl-token"
 
 const keypair = Keypair.generate();
 const publicKey = keypair.publicKey;
@@ -69,4 +70,27 @@ const fetchMintAccount= async() =>{
         )
     )
 }
-fetchMintAccount()
+
+const deserialiseMintAccount = async() =>{
+    const connection = new Connection("https://api.mainnet-beta.solana.com","confirmed")
+    const publicKey = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
+
+    const mint = await getMint(connection, publicKey, "confirmed")
+
+    console.log(JSON.stringify(
+        mint,
+        (key,value)=>{
+            if(typeof value === "bigint"){
+                return value.toString()
+            }
+
+            if(Buffer.isBuffer(value)){
+                return `<Buffer ${value.toString("hex")}>`
+            }
+
+            return value;
+        },
+        2
+    ))
+}
+deserialiseMintAccount()

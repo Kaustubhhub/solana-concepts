@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const web3_js_1 = require("@solana/web3.js");
+const spl_token_1 = require("@solana/spl-token");
 const keypair = web3_js_1.Keypair.generate();
 const publicKey = keypair.publicKey;
 const fetchWalletAccount = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -55,4 +56,18 @@ const fetchMintAccount = () => __awaiter(void 0, void 0, void 0, function* () {
         return value;
     }, 2));
 });
-fetchMintAccount();
+const deserialiseMintAccount = () => __awaiter(void 0, void 0, void 0, function* () {
+    const connection = new web3_js_1.Connection("https://api.mainnet-beta.solana.com", "confirmed");
+    const publicKey = new web3_js_1.PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+    const mint = yield (0, spl_token_1.getMint)(connection, publicKey, "confirmed");
+    console.log(JSON.stringify(mint, (key, value) => {
+        if (typeof value === "bigint") {
+            return value.toString();
+        }
+        if (Buffer.isBuffer(value)) {
+            return `<Buffer ${value.toString("hex")}>`;
+        }
+        return value;
+    }, 2));
+});
+deserialiseMintAccount();
