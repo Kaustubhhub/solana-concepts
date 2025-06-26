@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const spl_token_1 = require("@solana/spl-token");
 const web3_js_1 = require("@solana/web3.js");
 const sender = new web3_js_1.Keypair();
 const reciever = new web3_js_1.Keypair();
@@ -32,4 +33,32 @@ const transferSol = () => __awaiter(void 0, void 0, void 0, function* () {
     const accountInfo = yield connection.getAccountInfo(reciever.publicKey);
     console.log(JSON.stringify(accountInfo, null, 2));
 });
-transferSol();
+const createToken = () => __awaiter(void 0, void 0, void 0, function* () {
+    const connection = new web3_js_1.Connection("http://localhost:8899", "confirmed");
+    const wallet = new web3_js_1.Keypair();
+    const signature = yield connection.requestAirdrop(wallet.publicKey, web3_js_1.LAMPORTS_PER_SOL);
+    const latestBlockHash = yield connection.getLatestBlockhash();
+    yield connection.confirmTransaction({
+        blockhash: latestBlockHash.blockhash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        signature
+    });
+    const mint = new web3_js_1.Keypair();
+    const rentExemptionLamports = yield (0, spl_token_1.getMinimumBalanceForRentExemptAccount)(connection);
+    const createAccountinstruction = web3_js_1.SystemProgram.createAccount({
+        fromPubkey: wallet.publicKey,
+        newAccountPubkey: mint.publicKey,
+        lamports: rentExemptionLamports,
+        programId: spl_token_1.TOKEN_2022_PROGRAM_ID,
+        space: spl_token_1.MINT_SIZE
+    });
+    const initialiseMintInstruction = (0, spl_token_1.createInitializeMint2Instruction)(mint.publicKey, 2, // decimals
+    wallet.publicKey, // mint authority
+    wallet.publicKey, // freeze authority
+    spl_token_1.TOKEN_2022_PROGRAM_ID);
+    const transaction = new web3_js_1.Transaction().add(createAccountinstruction, initialiseMintInstruction);
+    const transactionSignature = yield (0, web3_js_1.sendAndConfirmTransaction)(connection, transaction, [wallet, mint]);
+    console.log("Mint Account:", `${mint.publicKey}`);
+    console.log("Transaction Signature:", `${transactionSignature}`);
+});
+createToken();
