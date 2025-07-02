@@ -81,4 +81,5 @@ const createToken = async() =>{
 }
 
 createToken()
+transferSol()
 
