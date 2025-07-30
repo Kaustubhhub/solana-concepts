@@ -14,17 +14,9 @@ import RequestAirdrop from './components/RequestAirDrop';
 
 
 export const App: FC = () => {
-  const network = WalletAdapterNetwork.Devnet;
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-  const wallets = useMemo(
-    () => [
-      new UnsafeBurnerWalletAdapter(),
-    ],
-    [network]
-  );
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider endpoint={"https://solana-devnet.g.alchemy.com/v2/V4Y7MtdoHLcK68DKqqGKZ"}>
       <WalletProvider wallets={[]} autoConnect>
         <WalletModalProvider>
             <WalletMultiButton />

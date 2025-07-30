@@ -15,7 +15,6 @@ const RequestAirdrop: FC = () => {
 
     const handleRequestAirdrop = async () => {
         if (!publicKey) {
-            alert("Please connect your wallet first.");
             return;
         }
 
@@ -33,7 +32,6 @@ const RequestAirdrop: FC = () => {
 
     const getAccountDetails = async () => {
         if (!publicKey) {
-            alert("Please connect your wallet first.");
             return;
         }
         const details = await connection.getAccountInfo(publicKey)
